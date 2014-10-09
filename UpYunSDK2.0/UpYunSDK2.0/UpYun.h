@@ -21,9 +21,16 @@
  *	@brief	默认表单API功能密钥 （必填项），可在init之后修改passcode的值来更改
  */
 #define DEFAULT_PASSCODE @""
-
 /**
  *	@brief	默认当前上传授权的过期时间，单位为“秒” （必填项，较大文件需要较长时间)，可在init之后修改expiresIn的值来更改
+ */
+#define DEFAULT_POLICY @""
+/**
+ * @brief 默认表单Policy (建议使用),从服务器端生成POLICY和SIGNATURE,这样可以防止别人获取到你的passcode后往空间放置垃圾图片
+ */
+#define DEFAULT_SIGNATURE @""
+/**
+ * @brief 默认表单签名 (建议使用),从服务器端生成POLICY和SIGNATURE这样可以防止别人获取到你的passcode后往空间放置垃圾图片
  */
 //#error 必填项
 #define DEFAULT_EXPIRES_IN 600
@@ -43,6 +50,10 @@ typedef void(^PROGRESS_BLOCK)(CGFloat percent,long long requestDidSendBytes);
 @property (nonatomic, copy) NSMutableDictionary *params;
 
 @property (nonatomic, copy) NSString *passcode;
+
+@property (nonatomic, copy) NSString *policy;
+
+@property (nonatomic, copy) NSString *signature;
 
 @property (nonatomic, copy) SUCCESS_BLOCK   successBlocker;
 

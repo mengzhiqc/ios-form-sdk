@@ -20,6 +20,8 @@
         self.bucket = DEFAULT_BUCKET;
         self.expiresIn = DEFAULT_EXPIRES_IN;
         self.passcode = DEFAULT_PASSCODE;
+        self.policy = DEFAULT_POLICY;
+        self.signature = DEFAULT_SIGNATURE;
 	}
 	return self;
 }
@@ -187,6 +189,7 @@
                 _successBlocker(jsonDic);
             }
         } else {
+            
             NSError *err = [NSError errorWithDomain:ERROR_DOMAIN
                                                code:[[jsonDic objectForKey:@"code"] intValue]
                                            userInfo:jsonDic];
@@ -202,17 +205,23 @@
         }
     };
     
-    NSString *policy = [self getPolicyWithSaveKey:saveKey];
-    NSString *signature = [self getSignatureWithPolicy:policy];
+    NSString *policy;
+    NSString *signature;
+    if([self.policy isEqualToString:@""] && [self.signature isEqualToString:@""]){
+        policy = self.policy;
+        signature = self.signature;
+    } else {
+        policy = [self getPolicyWithSaveKey:saveKey];
+        signature = [self getSignatureWithPolicy:policy];
+    }
+    
     NSDictionary * parameDic = @{@"policy":policy, @"signature":signature};
     
     __block UpYun * blockSelf = self;
     AFHTTPRequestOperationManager *httpManager = [[AFHTTPRequestOperationManager alloc] initWithBaseURL:REQUEST_URL(self.bucket)];
     httpManager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    
     AFHTTPRequestOperation *operation = [httpManager POST:@"" parameters:parameDic constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
         [blockSelf setData:formData data:data filePath:filePath];
-        
     } success:success failure:fail];
     
     [operation setUploadProgressBlock:progress];
